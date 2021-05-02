@@ -13,50 +13,77 @@ namespace Hahn.ApplicatonProcess.February2021.Web.Controllers
     [Route("api/[controller]")]
     public class AssetsController : ControllerBase
     {
-        [HttpGet]
-        [Route("{id}")]
-        public async Task<IActionResult> GetAssetAsync(Guid id)
+        [ActionName("GetAsset")]
+        [HttpGet("{id}")]        
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> GetAsset(int id, [FromServices] IAssetService service)
         {
-            return Ok("Get Asset Action");
+            var asset = await service.FindAsync(id);            
+            return (asset is null) ? NotFound(String.Format("The asset with id {0} was not found.", id)) : Ok(asset);             
         }
 
         [HttpGet]
-        [Route("")]
-        public async Task<IActionResult> GetAssets()
+        [ActionName("GetAssets")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IEnumerable<Asset>> GetAssets([FromServices] IAssetService service)
         {
-            return Ok("Get All Assets Action");
+            return await service.GetAllAssets();
         }
 
         [HttpPut]
-        [Route("")]
-        public async Task<IActionResult> UpdateAsset()
+        [ActionName("UpdateAsset")]
+        [ProducesResponseType(StatusCodes.Status202Accepted)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> UpdateAsset(Asset asset, [FromServices]IAssetService service)
         {
-            return Ok("Put Action");
+            try
+            {
+                await service.UpdateAsync(asset);
+            }
+            catch(ArgumentException)
+            {
+                return NotFound(string.Format("The asset with ID '{0}' and name '{1}' was not found.", asset.Id, asset.AssetName));
+            }
+            
+            return Ok();
         }
 
         [HttpPost]
-        [Route("")]
-        public async Task<IActionResult> CreateAsset([FromServices] IAssetService service)
-        {
-            var asset = new Asset
-            {                
-                AssetName = "Berliner",
-                Broken = false,
-                CountryOfDepartment = "Deutschland",
-                Department = Department.Store1,
-                EmailAddressOfDepartment = "dep@gmail.com",
-                PurchaseDate = DateTime.Today            
-            };
+        [ActionName("CreateAsset")]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> CreateAsset(
+            Asset asset,
+            [FromServices] IAssetService service)
+        {   
             await service.SaveAsync(asset);
-            var count = await service.Count();
-            return Ok(string.Format("The number of items in the Database is: {0}", count));
+            return CreatedAtAction(nameof(GetAsset), new { id = asset.Id }, asset);
         }
 
         [HttpDelete]
         [Route("{id}")]
-        public async Task<IActionResult> DeleteAsset()
+        [ActionName("DeleteAsset")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> DeleteAsset(int id, [FromServices] IAssetService service)
         {
-            return Ok("Delete Action");
+            try
+            {
+                await service.DeleteAsync(id);
+            }
+            catch (ArgumentException)
+            {
+
+                return NotFound(string.Format("The asset with ID '{0}' was not found.", id));
+            }
+
+            return Ok();
         }
     }
 }
