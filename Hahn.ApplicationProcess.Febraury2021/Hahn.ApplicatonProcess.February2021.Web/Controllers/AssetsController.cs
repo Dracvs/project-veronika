@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Hahn.ApplicatonProcess.February2021.Data.Entities;
+using Hahn.ApplicatonProcess.February2021.Domain.Services;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -34,9 +36,20 @@ namespace Hahn.ApplicatonProcess.February2021.Web.Controllers
 
         [HttpPost]
         [Route("")]
-        public async Task<IActionResult> CreateAsset()
+        public async Task<IActionResult> CreateAsset([FromServices] IAssetService service)
         {
-            return Ok("Post Action");
+            var asset = new Asset
+            {                
+                AssetName = "Berliner",
+                Broken = false,
+                CountryOfDepartment = "Deutschland",
+                Department = Department.Store1,
+                EmailAddressOfDepartment = "dep@gmail.com",
+                PurchaseDate = DateTime.Today            
+            };
+            await service.SaveAsync(asset);
+            var count = await service.Count();
+            return Ok(string.Format("The number of items in the Database is: {0}", count));
         }
 
         [HttpDelete]
