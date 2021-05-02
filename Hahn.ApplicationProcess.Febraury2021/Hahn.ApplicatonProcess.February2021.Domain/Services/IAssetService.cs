@@ -9,7 +9,16 @@ namespace Hahn.ApplicatonProcess.February2021.Domain.Services
 {
     public interface IAssetService
     {
-        Task SaveAsync(Asset asset);
+        Task<int> SaveAsync(Asset asset);
+
+        Task<IEnumerable<Asset>> GetAllAssets();
+
+        Task<Asset> FindAsync(int id);
+
+        Task UpdateAsync(Asset asset);
+
+        Task DeleteAsync(int id);
+
         Task<int> Count();
     }
 }

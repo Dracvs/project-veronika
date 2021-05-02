@@ -59,11 +59,13 @@ namespace Hahn.ApplicatonProcess.February2021.Data.Repositories
         {
             await _dbSet.AddAsync(entity);
         }
+
         public virtual void Update(TEntity entity)
         {
             _dbSet.Attach(entity);
             _context.Entry(entity).State = EntityState.Modified;
         }
+
         public virtual void Delete(TEntity entity)
         {
             if(_context.Entry(entity).State == EntityState.Detached)
@@ -78,76 +80,5 @@ namespace Hahn.ApplicatonProcess.February2021.Data.Repositories
             TEntity entityToDelete = await _dbSet.FindAsync(id);
             _dbSet.Remove(entityToDelete);
         }
-    }    
-    //public class Repository<TId, TEntity> : IRepository<TId, TEntity>
-    //    where TId : struct
-    //    where TEntity : BaseEntity<TId>
-    //{
-    //    private readonly VeronikaContext _context;
-    //    private readonly IUnitOfWork _unitOfWork;
-
-    //    public Repository(VeronikaContext context, IUnitOfWork unitOfWork)
-    //    {
-    //        _context = context;
-    //        _unitOfWork = unitOfWork;
-    //    }
-        
-    //    public async Task AddAsync(TEntity entity)
-    //    {
-    //        ValidateEntity(entity);
-    //        try
-    //        {
-    //            _context.Set<TEntity>().Add(entity);
-    //        }
-    //        finally
-    //        {
-    //            await _unitOfWork.SaveAsync();
-    //        }
-    //    }
-
-    //    public async Task DeleteAsync(TEntity entity)
-    //    {
-    //        try
-    //        {
-    //            _context.Set<TEntity>().Remove(entity);
-    //        }
-    //        finally
-    //        {
-    //            await _unitOfWork.SaveAsync();
-    //        }
-    //    }
-
-    //    public async Task<TEntity> FindAsync(TId id)
-    //        => await _context.Set<TEntity>().FindAsync(id);
-            
-
-    //    public async Task<IEnumerable<TEntity>> GetAllAsync()
-    //    {
-    //        return await _context.Set<TEntity>().ToListAsync();
-    //    }
-
-    //    public async Task UpdateAsync(TEntity entity)
-    //    {
-    //        ValidateEntity(entity);
-    //        try
-    //        {
-    //            _context.Set<TEntity>().Update(entity);
-
-    //        }
-    //        finally
-    //        {
-
-    //            await _unitOfWork.SaveAsync();
-    //        }
-    //    }
-
-    //    private static void ValidateEntity(TEntity entity)
-    //    {
-    //        if(entity is null)
-    //        {
-    //            throw new ArgumentNullException(nameof(entity), "The entity cannot be null");
-    //        }
-
-    //    }
-    //}
+    }        
 }
