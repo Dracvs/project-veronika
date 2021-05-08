@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Threading.Tasks;
 
 namespace Hahn.ApplicatonProcess.February2021.Web.Controllers
@@ -44,11 +45,16 @@ namespace Hahn.ApplicatonProcess.February2021.Web.Controllers
             {
                 await service.UpdateAsync(asset);
             }
-            catch(ArgumentException)
+            catch (HttpRequestException exception)
+            {
+                return BadRequest(exception.Data);
+            }
+            catch (ArgumentException ex)
             {
                 return NotFound(string.Format("The asset with ID '{0}' and name '{1}' was not found.", asset.Id, asset.AssetName));
             }
             
+
             return Ok();
         }
 
@@ -60,9 +66,17 @@ namespace Hahn.ApplicatonProcess.February2021.Web.Controllers
         public async Task<IActionResult> CreateAsset(
             Asset asset,
             [FromServices] IAssetService service)
-        {   
-            await service.SaveAsync(asset);
-            return CreatedAtAction(nameof(GetAsset), new { id = asset.Id }, asset);
+        {
+            try
+            {
+                await service.SaveAsync(asset);
+                return CreatedAtAction(nameof(GetAsset), new { id = asset.Id }, asset);
+            }
+            catch(HttpRequestException exception)
+            {
+                return BadRequest(exception.Data);                
+            }
+            
         }
 
         [HttpDelete]
