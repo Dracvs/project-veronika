@@ -16,6 +16,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Serilog;
+using Serilog.Core;
+using System.Reflection;
+using System.IO;
 
 namespace Hahn.ApplicatonProcess.February2021.Web
 {
@@ -24,7 +28,12 @@ namespace Hahn.ApplicatonProcess.February2021.Web
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
-        }
+
+            Log.Logger = new LoggerConfiguration()
+                .MinimumLevel.Information()                
+                .WriteTo.RollingFile(configuration.GetSection("Serilog")["FileName"])                
+                .CreateLogger();
+            }
 
         public IConfiguration Configuration { get; }
 
@@ -35,13 +44,23 @@ namespace Hahn.ApplicatonProcess.February2021.Web
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Hahn.ApplicatonProcess.February2021.Web", Version = "v1" });
+                c.SwaggerDoc("v1", new OpenApiInfo
+                {
+                    Title = "The Asset API",
+                    Version = "v1"
+                });
+
+                var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+                var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+                c.IncludeXmlComments(xmlPath);
+            
             });
 
             services.AddDbContext<VeronikaContext>(options =>
                 options.UseInMemoryDatabase("VeronikaDB"));
             services.AddScoped<IUnitOfWork, UnitOfWork>();            
-            services.AddScoped<IAssetService, AssetService>();
+            services.AddScoped<IAssetService, AssetService>();            
+            
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -52,7 +71,10 @@ namespace Hahn.ApplicatonProcess.February2021.Web
                 app.UseDeveloperExceptionPage();
                 app.UseSwagger();
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Hahn.ApplicatonProcess.February2021.Web v1"));
+
             }
+
+            
 
             app.UseHttpsRedirection();
 
