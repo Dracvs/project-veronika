@@ -10,17 +10,22 @@ using System.Net.Http.Json;
 using System.Text.Json;
 using FluentValidation.Results;
 using System.Net;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Configuration;
 
 namespace Hahn.ApplicatonProcess.February2021.Domain.Services
 {
     public class AssetService : IAssetService
     {
         private readonly IUnitOfWork _unitOfWork;
-        private static readonly HttpClient _client = new HttpClient();
+        private readonly ILogger<AssetService> _logger;
+        private readonly IConfiguration _configuration;
 
-        public AssetService(IUnitOfWork unitOfWork)
+        public AssetService(IUnitOfWork unitOfWork, ILogger<AssetService> logger, IConfiguration configuration)
         {
             _unitOfWork = unitOfWork;
+            _logger = logger;
+            _configuration = configuration;
         }
 
         public async Task<int> SaveAsync(Asset asset)
@@ -33,6 +38,7 @@ namespace Hahn.ApplicatonProcess.February2021.Domain.Services
             }
             else
             {
+                _logger.LogError(string.Format("Creation failed: The Asset failed validation (Asset name: {0})", asset.AssetName));
                 throw BuildException(assetValidation);
             }
 
@@ -69,12 +75,14 @@ namespace Hahn.ApplicatonProcess.February2021.Domain.Services
                 }
                 else
                 {
+                    _logger.LogError(string.Format("Update failed: The Asset with id {0} failed validation", asset.Id));
                     throw BuildException(assetValidation);
                 }
                 
             }
             else
             {
+                _logger.LogError(string.Format("Update failed: The Asset with id {0} was not found", asset.Id));
                 throw new ArgumentException(string.Format("The Asset with id {0} was not found", asset.Id));
             }
         }
@@ -89,6 +97,7 @@ namespace Hahn.ApplicatonProcess.February2021.Domain.Services
             }
             else
             {
+                _logger.LogError(string.Format("Delete failed: The Asset with id {0} was not found", id));
                 throw new ArgumentException(string.Format("The Asset with id {0} was not found", id));
             }
         }
@@ -114,15 +123,16 @@ namespace Hahn.ApplicatonProcess.February2021.Domain.Services
                     PropertyName = "CountryOfDepartment"
                 };
                 validation.Errors.Add(validationFailuere);
+                _logger.LogError(String.Format("The country {0} doesn't exist", asset.CountryOfDepartment));
             }
             return validation;
         }
 
-        private static async Task<bool> DoesCountryExist(string name)
+        private async Task<bool> DoesCountryExist(string name)
         {
             using HttpClient client = new()
             {
-                BaseAddress = new Uri("https://restcountries.eu/rest/v2/name/")
+                BaseAddress = new Uri(_configuration.GetSection("API")["RESTCountries"])
             };
 
             try
@@ -130,8 +140,8 @@ namespace Hahn.ApplicatonProcess.February2021.Domain.Services
                 var result = await client.GetFromJsonAsync<JsonElement>(name);
                 return result[0].GetProperty("name").GetString().Equals(name);                    
             }
-            catch(Exception Ex)
-            {
+            catch(Exception)
+            {                
                 return false;
             }            
         }

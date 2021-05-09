@@ -18,11 +18,18 @@ namespace Hahn.ApplicatonProcess.February2021.Web
             var host = CreateHostBuilder(args).Build();
             CreateDataBase(host);
             host.Run();
-            
+
         }
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
+                .ConfigureLogging(logging =>
+                {
+                    logging.AddFilter("Microsoft", LogLevel.Information);
+                    logging.AddFilter("System", LogLevel.Error);
+                    logging.SetMinimumLevel(LogLevel.Warning);
+                    
+                })
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder.UseStartup<Startup>();
