@@ -1,5 +1,19 @@
 <template>
-  <h1>${message}</h1>
+  <require from="bootstrap/dist/css/bootstrap.css"></require>
+  <require from="@fortawesome/fontawesome-free/css/all.css"></require>
+  <require from="./components/header"></require>
+  <require from="./components/asset-list"></require>
+  <require from="./components/create-asset"></require>
+
+  <header></header>
+  
+  <div class="container mt-2 mb-2">
+    <create-asset></create-asset>
+
+    <div class="row">        
+        <asset-list class="col-12"></asset-list>
+    </div>
+  </div>
 </template>
 
 
