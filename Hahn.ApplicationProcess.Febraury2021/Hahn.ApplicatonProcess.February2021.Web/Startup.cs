@@ -20,6 +20,7 @@ using Serilog;
 using Serilog.Core;
 using System.Reflection;
 using System.IO;
+using System.Text.Json.Serialization;
 
 namespace Hahn.ApplicatonProcess.February2021.Web
 {
@@ -41,7 +42,11 @@ namespace Hahn.ApplicatonProcess.February2021.Web
         public void ConfigureServices(IServiceCollection services)
         {
             
-            services.AddControllers();
+            services.AddControllers().AddJsonOptions(options =>
+            {
+                options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());                
+            });
+            services.AddCors();
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo
@@ -69,16 +74,20 @@ namespace Hahn.ApplicatonProcess.February2021.Web
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-                app.UseSwagger();
-                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Hahn.ApplicatonProcess.February2021.Web v1"));
-
             }
 
-            
+            app.UseSwagger();
+            app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Hahn.ApplicatonProcess.February2021.Web v1"));
+
+            app.UseCors(x => x
+            .AllowAnyMethod()
+            .AllowAnyHeader()
+            .SetIsOriginAllowed(origin => true)
+            .AllowCredentials());
 
             app.UseHttpsRedirection();
 
-            app.UseRouting();
+            app.UseRouting();            
 
             app.UseAuthorization();
 

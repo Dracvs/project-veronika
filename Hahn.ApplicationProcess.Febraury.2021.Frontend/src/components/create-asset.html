@@ -1,0 +1,65 @@
+<template>
+  <require from="../shared/keys"></require>
+  <require from="../model/Department"></require>
+  <div class="row">
+    <div class="col-12">
+      <h3>${heading}</h3>
+      <div class="card shadow-sm">
+        <div class="card-header">
+          <h3>Create a new asset</h3>
+        </div>
+        <div class="card-body">
+          
+            <div class="row">
+              <div class="form-group col-12 col-md-6">
+                <label>Asset name</label>
+                <input type="text" class="form-control" id="assetName" value.bind="asset.AssetName" />
+              </div>
+              <div class="form-group  col-12 col-md-6">
+                <label>Country of Department</label>
+                <input type="text" class="form-control"  id="countryOfDepartment" value.bind="asset.CountryOfDepartment" />
+              </div>
+              <div class="form-group col-12 col-md-6">
+                <label>Department</label>
+                <select class="form-control" id="department" value.bind="asset.Department">
+                  <option model.bind="null">Choose</option>
+                  <option repeat.for="item of enumKeys" model.bind="item" value="item">${item}</option>                   
+                </select>   
+                
+              </div>
+  
+              <div class="form-group col-12 col-md-6">
+                <label>Email</label>
+                <input type="email" class="form-control"  id="emailAddressOfDepartment" value.bind="asset.EmailAddressOfDepartment" />
+              </div>
+  
+              <div class="form-group col-12 col-md-6">
+                <label>Purchase Date</label>
+                <input type="date" class="form-control"  id="purchaseDate" value.bind="asset.PurchaseDate" />
+              </div>  
+              <div class="form-group form-check  col-12 col-md-6">
+                <div style="margin-top: 2.5rem;">
+                  <input type="checkbox" class="form-check-input" id="broken" value.bind="asset.Broken">
+                  <label class="form-check-label" for="exampleCheck1">Broken</label>
+                </div>
+              </div>
+              <div class="form-group col-12 text-right">
+                <button class="btn btn-outline-primary btn-lg" click.delegate="createAsset()"><i class="far fa-save"></i> Submit</button>
+              </div> 
+              <div class="col-12">
+                <div>
+                  <div if.bind="showSuccessfulItem" class="alert alert-success fade show" role="alert">
+                    ${message}
+                  </div>
+                  <div if.bind="showFailureItem" class="alert alert-danger fade" role="alert">
+                    ${message}
+                  </div>
+                  
+                </div>
+              </div>             
+            </div>
+        </div>          
+      </div>
+    </div>
+  </div>  
+</template>

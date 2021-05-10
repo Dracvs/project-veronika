@@ -1,5 +1,6 @@
 ﻿using Hahn.ApplicatonProcess.February2021.Data.Entities;
 using Hahn.ApplicatonProcess.February2021.Domain.Services;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -13,7 +14,7 @@ using System.Threading.Tasks;
 
 namespace Hahn.ApplicatonProcess.February2021.Web.Controllers
 {
-    [ApiController]
+    [ApiController]    
     [Route("api/[controller]")]
     public class AssetsController : ControllerBase
     {        
@@ -42,7 +43,7 @@ namespace Hahn.ApplicatonProcess.February2021.Web.Controllers
         /// <response code="404">If the asset was not found</response>
         /// <response code="500">if there was an unhandled exception</response>
         [ActionName("GetAsset")]
-        [HttpGet("{id}")]        
+        [HttpGet("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]

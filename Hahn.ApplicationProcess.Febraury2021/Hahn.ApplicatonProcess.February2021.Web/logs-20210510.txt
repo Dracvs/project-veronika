@@ -1,0 +1,6 @@
+2021-05-10 00:05:39.390 -05:00 [Error] Asset creation failed
+2021-05-10 00:14:33.694 -05:00 [Error] Asset creation failed
+2021-05-10 00:17:08.838 -05:00 [Error] Asset creation failed
+2021-05-10 00:19:23.704 -05:00 [Error] Asset creation failed
+2021-05-10 00:20:05.193 -05:00 [Error] Asset creation failed
+2021-05-10 00:20:37.975 -05:00 [Error] Asset creation failed

@@ -1,3 +1,11 @@
+import { bindable } from 'aurelia-framework';
+import 'bootstrap/dist/css/bootstrap.css';
 export class App {
-  public message = 'Hello World!';
+  public heading: string;
+  public message: string;
+  
+  constructor(){
+    this.heading = "The Heading";  
+    this.message = 'Hello World!';
+  }
 }

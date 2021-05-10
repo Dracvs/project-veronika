@@ -5,7 +5,8 @@
 	<GenerateDocumentationFile>true</GenerateDocumentationFile>
 	<NoWarn>$(NoWarn);1591</NoWarn>
     <UserSecretsId>bee9edfa-6e00-4efb-a122-97a36a77ecda</UserSecretsId>
-    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>	
+    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+    <OutputType>Exe</OutputType>	
   </PropertyGroup>
 
   <ItemGroup>
@@ -22,6 +23,12 @@
   <ItemGroup>
     <ProjectReference Include="..\Hahn.ApplicatonProcess.February2021.Data\Hahn.ApplicatonProcess.February2021.Data.csproj" />
     <ProjectReference Include="..\Hahn.ApplicatonProcess.February2021.Domain\Hahn.ApplicatonProcess.February2021.Domain.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Dockerfile">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>
